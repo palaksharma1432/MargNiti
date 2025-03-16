@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MargNiti - Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Dropdown menu styles */
+        .dropdown-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 300px;
+            height: 100vh;
+            background-color: white;
+            border-right: 1px solid #e2e8f0;
+            box-shadow: 4px 0 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .dropdown-menu a {
+            display: block;
+            padding: 12px 16px;
+            color: #4a5568;
+            text-decoration: none;
+            transition: background 0.2s;
+            font-size: 18px;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #f1f5f9;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        /* Overlay for the rest of the page */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+
+        /* Hover effect for trendy blocks */
+        .trendy-block {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .trendy-block:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Profile dropdown styles */
+        .profile-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            z-index: 1000;
+        }
+
+        .profile-dropdown.show {
+            display: block;
+        }
+
+        /* Chatbot styles */
+        #chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        #chatbot-header {
+            background-color: #1a365d;
+            color: white;
+            padding: 10px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #chatbot-messages {
+            flex-grow: 1;
+            padding: 10px;
+            overflow-y: auto;
+            max-height: 300px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        #chatbot-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        #chatbot-input input {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #e2e8f0;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        #chatbot-input button {
+            background-color: #1a365d;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #chatbot-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #1a365d;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-blue-50">
+    <!-- Navigation Bar -->
+    <nav class="bg-blue-900 text-white p-4 flex justify-between items-center w-full">
+        <!-- Dashboard Link with Icon -->
+        <div class="flex items-center space-x-4 relative">
+            <a href="#" class="text-lg font-bold flex items-center" onclick="toggleDropdown(event)">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+                Dashboard
+            </a>
+        </div>
+    </nav>
+
+    <!-- Dropdown Menu -->
+    <div id="dropdown-menu" class="dropdown-menu">
+        <a href="#" onclick="handleProfileClick(event)">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+            </svg>
+            My Profile
+        </a>
+        <a href="#" onclick="handleExploreDomainsClick()">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+            </svg>
+            Explore More Domains
+        </a>
+        <a href="#" onclick="handleSettingsClick()">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+            </svg>
+            Settings
+        </a>
+        <a href="#" onclick="handleSignOutClick()">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd" />
+            </svg>
+            Sign Out
+        </a>
+    </div>
+
+    <!-- Overlay -->
+    <div id="overlay" class="overlay" onclick="closeDropdown()"></div>
+
+    <!-- Profile Dropdown -->
+    <div id="profile-dropdown" class="profile-dropdown">
+        <p><strong>Name:</strong> <span id="profile-name"></span></p>
+        <p><strong>Email:</strong> <span id="profile-email"></span></p>
+        <p><strong>Domain:</strong> <span id="profile-domain"></span></p>
+    </div>
+
+    <!-- Chatbot Toggle Button -->
+    <button id="chatbot-toggle" onclick="toggleChatbot()">💬</button>
+
+    <!-- Chatbot Container -->
+    <div id="chatbot-container">
+        <div id="chatbot-header">
+            <span>AI Chatbot</span>
+            <button onclick="toggleChatbot()">✖</button>
+        </div>
+        <div id="chatbot-messages"></div>
+        <div id="chatbot-input">
+            <input type="text" id="chatbot-input-field" placeholder="Ask me anything..." onkeypress="handleChatbotInput(event)">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="min-h-screen flex flex-col items-center justify-start p-8">
+        <!-- Welcome Message -->
+        <h1 id="welcome-message" class="text-4xl font-bold text-blue-900 mb-4">Welcome, User!</h1>
+
+        <!-- Selected Domain Block -->
+        <div id="domain-block" class="w-full max-w-md mt-6"></div>
+
+        <!-- Trendy Topics Block -->
+        <div class="w-full max-w-4xl mt-10">
+            <h2 class="text-2xl font-bold text-blue-900 mb-4">Trendy Topics in the Market</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Topic 1 -->
+                <div class="trendy-block bg-white p-6 rounded-lg shadow-md cursor-pointer" onclick="handleTrendyBlockClick('https://en.wikipedia.org/wiki/Artificial_intelligence')">
+                    <h3 class="text-xl font-bold text-blue-900">Artificial Intelligence</h3>
+                    <p class="text-gray-700 mt-2">Explore the latest trends in AI and machine learning.</p>
+                </div>
+                <!-- Topic 2 -->
+                <div class="trendy-block bg-white p-6 rounded-lg shadow-md cursor-pointer" onclick="handleTrendyBlockClick('https://en.wikipedia.org/wiki/Web_development')">
+                    <h3 class="text-xl font-bold text-blue-900">Web Development</h3>
+                    <p class="text-gray-700 mt-2">Learn about modern web development frameworks and tools.</p>
+                </div>
+                <!-- Topic 3 -->
+                <div class="trendy-block bg-white p-6 rounded-lg shadow-md cursor-pointer" onclick="handleTrendyBlockClick('https://en.wikipedia.org/wiki/Digital_marketing')">
+                    <h3 class="text-xl font-bold text-blue-900">Digital Marketing</h3>
+                    <p class="text-gray-700 mt-2">Discover strategies for effective digital marketing campaigns.</p>
+                </div>
+                <!-- Topic 4 -->
+                <div class="trendy-block bg-white p-6 rounded-lg shadow-md cursor-pointer" onclick="handleTrendyBlockClick('https://en.wikipedia.org/wiki/Cloud_computing')">
+                    <h3 class="text-xl font-bold text-blue-900">Cloud Computing</h3>
+                    <p class="text-gray-700 mt-2">Understand the benefits of cloud computing and its applications.</p>
+                </div>
+                <!-- Topic 5 -->
+                <div class="trendy-block bg-white p-6 rounded-lg shadow-md cursor-pointer" onclick="handleTrendyBlockClick('https://en.wikipedia.org/wiki/Data_science')">
+                    <h3 class="text-xl font-bold text-blue-900">Data Science</h3>
+                    <p class="text-gray-700 mt-2">Dive into data analysis, visualization, and machine learning.</p>
+                </div>
+                <!-- Topic 6 -->
+                <div class="trendy-block bg-white p-6 rounded-lg shadow-md cursor-pointer" onclick="handleTrendyBlockClick('https://en.wikipedia.org/wiki/User_experience_design')">
+                    <h3 class="text-xl font-bold text-blue-900">UI/UX Design</h3>
+                    <p class="text-gray-700 mt-2">Learn the principles of user interface and user experience design.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to display user data from local storage
+        function displayUserData() {
+            const username = localStorage.getItem('username') || 'User';
+            const domain = localStorage.getItem('domain') || 'No domain selected';
+
+            // Display welcome message
+            document.getElementById('welcome-message').innerText = `Welcome, ${username}!`;
+
+            // Display the selected domain as a clickable block
+            const domainBlock = document.getElementById('domain-block');
+            domainBlock.innerHTML = `
+                <div onclick="redirectToDomainPage('${domain}')" class="bg-blue-100 p-6 rounded-lg shadow-md cursor-pointer hover:bg-blue-200 transition">
+                    <h2 class="text-xl font-bold text-blue-900">${domain}</h2>
+                    <p class="text-gray-700">Click to explore the roadmap and resources for ${domain}.</p>
+                </div>
+            `;
+        }
+
+        // Function to redirect to the domain roadmap page
+        function redirectToDomainPage(domain) {
+            window.location.href = `domain-roadmap.html?domain=${encodeURIComponent(domain)}`;
+        }
+
+        // Function to handle trendy block clicks
+        function handleTrendyBlockClick(url) {
+            window.open(url, '_blank'); // Open the URL in a new tab
+        }
+
+        // Function to toggle the dropdown menu
+        function toggleDropdown(event) {
+            event.preventDefault(); // Prevent default link behavior
+            const dropdownMenu = document.getElementById('dropdown-menu');
+            const overlay = document.getElementById('overlay');
+            dropdownMenu.classList.toggle('show');
+            overlay.classList.toggle('show');
+        }
+
+        // Function to close the dropdown menu
+        function closeDropdown() {
+            const dropdownMenu = document.getElementById('dropdown-menu');
+            const overlay = document.getElementById('overlay');
+            dropdownMenu.classList.remove('show');
+            overlay.classList.remove('show');
+        }
+
+        // Function to handle "My Profile" click
+        function handleProfileClick(event) {
+            event.preventDefault(); // Prevent default link behavior
+            const profileDropdown = document.getElementById('profile-dropdown');
+            profileDropdown.classList.toggle('show');
+
+            // Populate user information
+            document.getElementById('profile-name').textContent = localStorage.getItem('username') || 'User';
+            document.getElementById('profile-email').textContent = localStorage.getItem('email') || 'No email provided';
+            document.getElementById('profile-domain').textContent = localStorage.getItem('domain') || 'No domain selected';
+        }
+
+        // Function to handle "Explore More Domains" click
+        function handleExploreDomainsClick() {
+            alert('Explore More Domains clicked!'); // Replace with actual functionality
+        }
+
+        // Function to handle "Settings" click
+        function handleSettingsClick() {
+            alert('Settings clicked!'); // Replace with actual functionality
+        }
+
+        // Function to handle "Sign Out" click
+        function handleSignOutClick() {
+            // Clear user data from localStorage
+            localStorage.removeItem('username');
+            localStorage.removeItem('email');
+            localStorage.removeItem('domain');
+
+            // Redirect to the sign-in page
+            window.location.href = 'signin.html';
+        }
+
+        // Chatbot functionality
+        const chatbotContainer = document.getElementById('chatbot-container');
+        const chatbotMessages = document.getElementById('chatbot-messages');
+        const chatbotInputField = document.getElementById('chatbot-input-field');
+
+        // Toggle chatbot visibility
+        function toggleChatbot() {
+            chatbotContainer.style.display = chatbotContainer.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        // Send message to chatbot
+        async function sendMessage() {
+            const userMessage = chatbotInputField.value.trim();
+            if (!userMessage) return;
+
+            // Add user message to the chat
+            addMessage('user', userMessage);
+            chatbotInputField.value = '';
+
+            // Get AI response
+            const aiResponse = await getAIResponse(userMessage);
+            addMessage('ai', aiResponse);
+        }
+
+        // Handle Enter key press
+        function handleChatbotInput(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // Add a message to the chat
+        function addMessage(sender, message) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', sender === 'user' ? 'user-message' : 'ai-message');
+            messageElement.textContent = message;
+            chatbotMessages.appendChild(messageElement);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight; // Scroll to bottom
+        }
+
+        // Get AI response using OpenAI API
+        async function getAIResponse(userMessage) {
+            const apiKey = 'YOUR_OPENAI_API_KEY'; // Replace with your OpenAI API key
+            const apiUrl = 'https://api.openai.com/v1/chat/completions';
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-3.5-turbo',
+                        messages: [{ role: 'user', content: userMessage }]
+                    })
+                });
+
+                const data = await response.json();
+                return data.choices[0].message.content;
+            } catch (error) {
+                console.error('Error fetching AI response:', error);
+                return 'Sorry, I am unable to respond at the moment.';
+            }
+        }
+
+        // Display user data when the page loads
+        window.onload = displayUserData;
+    </script>
+</body>
+</html>
